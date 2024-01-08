@@ -23,39 +23,20 @@ import java.util.List;
 @Service
 public class TimelineServiceImpl extends ServiceImpl<TimelineDao, Timeline> implements TimelineService {
     private final TimelineDao timelineDao;
-    private final HostService hostService;
-    private final CaseService caseService;
 
-    public TimelineServiceImpl(TimelineDao timelineDao, HostService hostService, @Lazy CaseService caseService) {
+    public TimelineServiceImpl(TimelineDao timelineDao) {
         this.timelineDao = timelineDao;
-        this.hostService = hostService;
-        this.caseService = caseService;
     }
 
     @Override
     @Transactional(transactionManager = "transactionManager", rollbackFor = Exception.class)
-    public void deleteBatchByCaseId(Long caseId) {
-        timelineDao.deleteBatchByCaseId(caseId);
+    public void deleteBatchByOperationId(Long operationId) {
+        timelineDao.deleteBatchByOperationId(operationId);
     }
 
-    /**
-     * 通过caldera的能力ID与执行方案ID插入时间线
-     * @param operationId Long
-     * @param abilityId String
-     * @param timeline Timeline
-     * @param paw String
-     */
-    @Override
-    @Transactional(transactionManager = "transactionManager", rollbackFor = Exception.class)
-    public void insetByOperationAndAbility(Long operationId, String abilityId, Timeline timeline,String paw) {
-        List<Long> ids = caseService.getIdsByOperationAndAbility(operationId,abilityId);
-        timeline.setCaseId(ids.get(0));
-        timeline.setIp(hostService.getIpByPaw(paw));
-        timelineDao.insert(timeline);
-    }
 
     @Override
-    public List<Timeline> getTimelines(Long caseId) {
-        return null;
+    public List<Timeline> getTimelines(Long operationId) {
+        return timelineDao.getTimelines(operationId);
     }
 }

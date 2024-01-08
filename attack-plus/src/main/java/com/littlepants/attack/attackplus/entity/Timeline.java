@@ -32,9 +32,9 @@ public class Timeline implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long id;
 
-    @TableField("case_id")
+    @TableField("operation_id")
     @JsonFormat(shape = JsonFormat.Shape.STRING)
-    private Long caseId;
+    private Long operationId;
 
     @TableField("timeline")
     private LocalDateTime timeline;
@@ -45,18 +45,15 @@ public class Timeline implements Serializable {
     @TableField("field_action")
     private String fieldAction;
 
-    @TableField("ip")
-    private String ip;
 
-    public Timeline(Long caseId, String fieldName, String fieldAction, String ip) {
-        this.caseId = caseId;
+    public Timeline(Long operationId, String fieldName, String fieldAction) {
+        this.operationId = operationId;
         this.fieldName = fieldName;
         this.fieldAction = fieldAction;
-        this.ip = ip;
     }
 
-    public Timeline(AttackLog attackLog, Long caseId){
+    public Timeline(AttackLog attackLog, Long operationId){
         this.fieldAction = attackLog.getMsg();
-        this.caseId = caseId;
+        this.operationId = operationId;
     }
 }

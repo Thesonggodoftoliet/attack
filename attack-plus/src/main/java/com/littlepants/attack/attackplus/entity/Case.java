@@ -28,7 +28,6 @@ public class Case implements Serializable,Cloneable {
     @Serial
     private static final long serialVersionUID = 1L;
 
-    @ApiModelProperty("可用作caldera分组")
     @TableId(value = "id", type = IdType.ASSIGN_ID)
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long id;
@@ -109,6 +108,9 @@ public class Case implements Serializable,Cloneable {
 
     @TableField("target_host")
     private String targetHost;
+
+    @TableField("case_id")
+    private String caseId;
 
     public Case(Testcase testcase,Long operationId){
         this.testcaseId = testcase.getId();

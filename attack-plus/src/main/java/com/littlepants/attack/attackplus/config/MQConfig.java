@@ -18,40 +18,53 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MQConfig {
     @Bean
-    public DirectExchange nessusExchange(){
+    public DirectExchange nessusExchange() {
         return new DirectExchange("nessus");
     }
 
     @Bean
-    public DirectExchange calderaExchange(){
+    public DirectExchange calderaExchange() {
         return new DirectExchange("caldera");
     }
 
-    private static class ReceiverConfig{
-        @Bean
-        public Queue nessusQueue(){
-            return new AnonymousQueue();
-        }
-
-        @Bean
-        public Queue calderaQueue(){
-            return new AnonymousQueue();
-        }
-
-        @Bean
-        public Binding bindingNessus(DirectExchange nessusExchange, Queue nessusQueue){
-            return BindingBuilder.bind(nessusQueue)
-                    .to(nessusExchange)
-                    .with("graph");
-        }
-
-        @Bean
-        public Binding bindingCaldera(DirectExchange calderaExchange, Queue calderaQueue){
-            return BindingBuilder.bind(calderaQueue)
-                    .to(calderaExchange)
-                    .with("timeline");
-        }
-
+    @Bean
+    public DirectExchange rpcExchange(){
+        return new DirectExchange("rpc");
     }
+
+    @Bean
+    public Queue nessusQueue() {
+        return new AnonymousQueue();
+    }
+
+    @Bean
+    public Queue calderaQueue() {
+        return new AnonymousQueue();
+    }
+
+    @Bean
+    public Queue rpcQueue() {
+        return new Queue("rpc.request");
+    }
+
+    @Bean
+    public Binding bindingNessus(DirectExchange nessusExchange, Queue nessusQueue) {
+        return BindingBuilder.bind(nessusQueue)
+                .to(nessusExchange)
+                .with("graph");
+    }
+
+    @Bean
+    public Binding bindingCaldera(DirectExchange calderaExchange, Queue calderaQueue) {
+        return BindingBuilder.bind(calderaQueue)
+                .to(calderaExchange)
+                .with("timeline");
+    }
+
+    @Bean
+    public Binding bindingRpc(DirectExchange rpcExchange,Queue rpcQueue){
+        return BindingBuilder.bind(rpcQueue).to(rpcExchange).with("rpc");
+    }
+
 
 }

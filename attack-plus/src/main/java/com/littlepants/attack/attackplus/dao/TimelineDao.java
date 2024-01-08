@@ -19,9 +19,9 @@ import java.util.List;
  */
 @Mapper
 public interface TimelineDao extends BaseMapper<Timeline> {
-    @Delete("DELETE FROM att_timeline WHERE case_id = #{case_id}")
-    void deleteBatchByCaseId(@Param("case_id")Long caseId);
+    @Delete("DELETE FROM att_timeline WHERE operation_id = #{operation_id}")
+    void deleteBatchByOperationId(@Param("operation_id")Long operationId);
 
-    @Select("SELECT * FROM att_time WHERE case_id = #{case_id} ORDER BY timeline DESC")
-    List<Timeline> getTimelinesByCase(@Param("case_id")Long caseId);
+    @Select("SELECT * FROM att_time WHERE operation_id = #{operation_id} ORDER BY timeline DESC")
+    List<Timeline> getTimelines(@Param("operation_id")Long operationId);
 }

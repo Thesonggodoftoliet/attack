@@ -144,4 +144,11 @@ public class HostServiceImpl extends ServiceImpl<HostDao,Host> implements HostSe
     public List<Host> getHostsByOperation(Long operationId) {
         return hostDao.getHostsByOperation(operationId);
     }
+
+    @Override
+    public Host getHostByPaw(String paw) {
+        QueryWrapper<Host> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("paw",paw);
+        return hostDao.selectOne(queryWrapper);
+    }
 }

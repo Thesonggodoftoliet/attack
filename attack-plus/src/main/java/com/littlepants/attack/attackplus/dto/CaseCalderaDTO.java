@@ -36,6 +36,11 @@ public class CaseCalderaDTO implements Serializable {
     private int status;
     @JsonProperty("operation_id")
     private Long operationId;
+    @JsonProperty("testcase_name")
+    private String testcaseName;
+    @JsonProperty("case_id")
+    private String caseId;
+    private String paw;
     @JsonProperty("ability_id")
     private String abilityId;
 }

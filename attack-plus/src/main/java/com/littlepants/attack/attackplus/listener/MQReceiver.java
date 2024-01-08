@@ -121,11 +121,11 @@ public class MQReceiver {
             DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
             dateString = dateString.replace("T"," ");
             dateString = dateString.replace("Z","");
-            Timeline timeline = new Timeline(1L, (String) result.get("filed"), (String) result.get("action"),null);
+            Timeline timeline = new Timeline( Long.valueOf(result.get("operation_id").toString()),
+                    (String) result.get("filed"), (String) result.get("action"));
             timeline.setTimeline(LocalDateTime.parse(
                     dateString.replace("Z","UTC"),dateTimeFormatter).plusHours(8L));
-            timelineService.insetByOperationAndAbility(Long.getLong((String) result.get("operation_id")),
-                    (String) result.get("ability_id"),timeline, (String) result.get("paw"));
+            timelineService.save(timeline);
         }catch (Exception e){
             logger.error(e.getMessage());
         }

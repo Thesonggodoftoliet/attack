@@ -129,28 +129,5 @@ public class OperationServiceImpl extends ServiceImpl<OperationDao, Operation> i
         newOperation.setId(operation.getId());
         newOperation.setOperationId(operation.getId().toString());
         operationDao.updateById(newOperation);
-
-        // 插入执行用例
-        Map<String, List<Long>> testcaseIds = campaignService.getTestcaseIdsGroupByPlatform(operation.getCampaignId());
-        TestcaseStrategy testcaseStrategy;
-        List<Case> caseList = new ArrayList<>();
-        for (String platform:testcaseIds.keySet()){
-            // 获取执行用例
-            testcaseStrategy = applicationContext.getBean(platform,TestcaseStrategy.class);
-            List<Case> tempList = testcaseStrategy.toCases(testcaseStrategy.getTestcasesByIds(testcaseIds.get(platform)),
-                    operation.getId());
-            caseList.addAll(tempList);
-        }
-        List<Host> hosts = hostService.getHostsByOperation(operation.getId());
-        List<Case> cases = new ArrayList<>();
-        for (Case temp:caseList){
-            for (Host host:hosts){
-                Case save = temp.clone();
-                save.setTargetIp(host.getIp());
-                save.setTargetHost(host.getHostName());
-                cases.add(save);
-            }
-        }
-        caseService.saveBatch(cases);
     }
 }

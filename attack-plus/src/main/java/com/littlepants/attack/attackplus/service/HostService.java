@@ -22,4 +22,5 @@ public interface HostService extends IService<Host>{
     List<Host> getHostsByTopology(Long topologyId);
     List<Host> deployedAgent(Long topologyId);
     List<Host> getHostsByOperation(Long operationId);
+    Host getHostByPaw(String paw);
 }

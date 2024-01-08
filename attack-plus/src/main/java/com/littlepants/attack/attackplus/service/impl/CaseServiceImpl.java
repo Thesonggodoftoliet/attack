@@ -1,15 +1,17 @@
 package com.littlepants.attack.attackplus.service.impl;
 
+import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.littlepants.attack.attackplus.dao.CaseDao;
 import com.littlepants.attack.attackplus.dto.CaseCalderaDTO;
 import com.littlepants.attack.attackplus.dto.CaseDTO;
 import com.littlepants.attack.attackplus.entity.Case;
 import com.littlepants.attack.attackplus.entity.CaseTools;
+import com.littlepants.attack.attackplus.entity.Host;
+import com.littlepants.attack.attackplus.entity.TestcaseCaldera;
 import com.littlepants.attack.attackplus.mapper.CaseMapper;
-import com.littlepants.attack.attackplus.service.CaseService;
-import com.littlepants.attack.attackplus.service.CaseToolsService;
-import com.littlepants.attack.attackplus.service.TimelineService;
+import com.littlepants.attack.attackplus.service.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,11 +30,16 @@ import java.util.List;
 public class CaseServiceImpl extends ServiceImpl<CaseDao,Case> implements CaseService {
     private final CaseToolsService caseToolsService;
     private final TimelineService timelineService;
+    private final HostService hostService;
+    private final TestcaseCalderaService testcaseCalderaService;
     private final CaseDao caseDao;
 
-    public CaseServiceImpl(CaseToolsService caseToolsService, TimelineService timelineService, CaseDao caseDao) {
+    public CaseServiceImpl(CaseToolsService caseToolsService, TimelineService timelineService,
+                           HostService hostService, TestcaseCalderaService testcaseCalderaService, CaseDao caseDao) {
         this.caseToolsService = caseToolsService;
         this.timelineService = timelineService;
+        this.hostService = hostService;
+        this.testcaseCalderaService = testcaseCalderaService;
         this.caseDao = caseDao;
     }
 
@@ -48,7 +55,6 @@ public class CaseServiceImpl extends ServiceImpl<CaseDao,Case> implements CaseSe
     @Override
     @Transactional(transactionManager = "transactionManager", rollbackFor = Exception.class)
     public void deleteById(Long caseId) {
-        timelineService.deleteBatchByCaseId(caseId);
         caseToolsService.deleteBatchByCaseId(caseId);
         caseDao.deleteById(caseId);
     }
@@ -66,10 +72,16 @@ public class CaseServiceImpl extends ServiceImpl<CaseDao,Case> implements CaseSe
     @Transactional(transactionManager = "transactionManager",rollbackFor = Exception.class)
     public void updateFromCaldera(List<CaseCalderaDTO> cases) {
         for (CaseCalderaDTO dto:cases){
-            List<Long> ids = getIdsByOperationAndAbility(dto.getOperationId(), dto.getAbilityId());
+            Host host = hostService.getHostByPaw(dto.getPaw());
             Case mycase = CaseMapper.INSTANCE.paramDTOToCase(dto);
-            mycase.setId(ids.get(0));
-            caseDao.updateById(mycase);
+            QueryWrapper<TestcaseCaldera> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("ability_id",dto.getAbilityId());
+            TestcaseCaldera testcaseCaldera = testcaseCalderaService.getOne(queryWrapper);
+            mycase.setTargetHost(host.getHostName());
+            mycase.setTargetIp(host.getIp());
+            mycase.setTestcaseId(testcaseCaldera.getId());
+            mycase.setTestcaseName(testcaseCaldera.getTestcaseName());
+            caseDao.insert(mycase);
         }
     }
 
@@ -81,8 +93,8 @@ public class CaseServiceImpl extends ServiceImpl<CaseDao,Case> implements CaseSe
     @Transactional(transactionManager = "transactionManager",rollbackFor = Exception.class)
     public void deleteByOperationId(Long operationId) {
         List<Long> caseIds = caseDao.getIdsByOperationId(operationId);
+        timelineService.deleteBatchByOperationId(operationId);
         for (Long id:caseIds){
-            timelineService.deleteBatchByCaseId(id);
             caseToolsService.deleteBatchByCaseId(id);
             caseDao.deleteById(id);
         }

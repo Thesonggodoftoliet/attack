@@ -32,8 +32,8 @@ public class TimelineController {
         this.timelineService = timelineService;
     }
 
-    @GetMapping("/{caseId}")
-    public R<List<Timeline>> getTimelines(@PathVariable("caseId")Long caseId){
-        return R.success(timelineService.getTimelines(caseId));
+    @GetMapping("/{operationId}")
+    public R<List<Timeline>> getTimelines(@PathVariable("operationId") Long operationId){
+        return R.success(timelineService.getTimelines(operationId));
     }
 }

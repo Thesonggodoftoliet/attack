@@ -14,7 +14,6 @@ import java.util.List;
  * @since 2023-07-05
  */
 public interface TimelineService extends IService<Timeline>{
-    void deleteBatchByCaseId(Long caseId);
-    void insetByOperationAndAbility(Long operationId, String abilityId,Timeline timeline,String paw);
-    List<Timeline> getTimelines(Long caseId);
+    void deleteBatchByOperationId(Long operationId);
+    List<Timeline> getTimelines(Long operationId);
 }
