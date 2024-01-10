@@ -7,6 +7,7 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -27,4 +28,11 @@ public interface CaseDao extends BaseMapper<Case> {
 
     @Select("SELECT * FROM att_case WHERE operation_id = #{operation_id}")
     List<Case> getCasesByOperationId(@Param("operation_id")Long operationId);
+
+    @Select("SELECT `status` AS `progress`, count(`status`) AS `value` FROM att_case GROUP BY `status` " +
+            "WHERE operation_id=#{operation_id}")
+    List<Map<String,Integer>> getProgressByOperationId(@Param("operation_id")Long operationId);
+
+    @Select("SELECT outcome, count(outcome) AS value FROM att_case GROUP BY outcome WHERE operation_id=#{operation_id}")
+    List<Map<String,Integer>> getOutcomeByOperationId(@Param("operation_id")Long operationId);
 }

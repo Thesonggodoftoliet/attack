@@ -16,8 +16,8 @@ public enum AttackLog implements BaseAttackLog{
     TERMINATE(-1, "终止执行"),
     FAIL(2,"执行失败");
 
-    private int code;
-    private String msg;
+    private final int code;
+    private final String msg;
 
     AttackLog(int code, String msg) {
         this.code = code;

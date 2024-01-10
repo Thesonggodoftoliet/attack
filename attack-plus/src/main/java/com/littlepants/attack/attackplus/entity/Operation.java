@@ -41,7 +41,7 @@ public class Operation implements Serializable {
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long campaignId;
 
-    @ApiModelProperty("0 未开始 1 进行中 2 已完成 3 已终止")
+    @ApiModelProperty("0 未开始 1 进行中 2 已完成")
     @TableField("state")
     private Integer state;
 
