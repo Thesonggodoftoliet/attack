@@ -1,5 +1,6 @@
 package com.littlepants.attack.attackplus.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serial;
@@ -19,10 +20,14 @@ import java.io.Serializable;
 public class CaseDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long id;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long testcaseId;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long operationId;
     private String name;
+    private Integer state;
     private String tactic;
     private String outcome;
     //ID

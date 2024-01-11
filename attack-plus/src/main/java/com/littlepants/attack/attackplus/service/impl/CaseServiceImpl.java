@@ -1,6 +1,5 @@
 package com.littlepants.attack.attackplus.service.impl;
 
-import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.littlepants.attack.attackplus.dao.CaseDao;
@@ -16,7 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -109,5 +110,21 @@ public class CaseServiceImpl extends ServiceImpl<CaseDao,Case> implements CaseSe
     public List<CaseDTO> getCasesByOperationId(Long operationId) {
         List<Case> cases = caseDao.getCasesByOperationId(operationId);
         return CaseMapper.INSTANCE.casesToDTOs(cases);
+    }
+
+    /**
+     * 返回Operation包含的Case的进度，成效
+     *
+     * @param operationId Long
+     * @return Map
+     */
+    @Override
+    public Map<String, List<Map<String, Object>>> getBarByOperationId(Long operationId) {
+        List<Map<String,Object>> progress = caseDao.getProgressByOperationId(operationId);
+        List<Map<String,Object>> outcome = caseDao.getOutcomeByOperationId(operationId);
+        Map<String,List<Map<String,Object>>> result = new HashMap<>();
+        result.put("progress",progress);
+        result.put("outcome",outcome);
+        return result;
     }
 }

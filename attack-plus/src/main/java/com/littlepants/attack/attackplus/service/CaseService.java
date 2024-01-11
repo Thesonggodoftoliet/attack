@@ -6,6 +6,7 @@ import com.littlepants.attack.attackplus.dto.CaseDTO;
 import com.littlepants.attack.attackplus.entity.Case;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -22,4 +23,5 @@ public interface CaseService extends IService<Case>{
     void updateFromCaldera(List<CaseCalderaDTO> cases);
     void deleteByOperationId(Long operationId);
     List<CaseDTO> getCasesByOperationId(Long operationId);
+    Map<String,List<Map<String,Object>>> getBarByOperationId(Long operationId);
 }

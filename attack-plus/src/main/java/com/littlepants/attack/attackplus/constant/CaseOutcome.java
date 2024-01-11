@@ -17,7 +17,7 @@ public enum CaseOutcome {
     TBD("TBD"),
     BLOCKED("Blocked"),
     ALERTED("Alerted"),
-    LOGGED("logged"),
+    LOGGED("Logged"),
     NONE("None"),
     N_A("N/A")
     ;

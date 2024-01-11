@@ -28,10 +28,12 @@ public interface CaseMapper {
     List<Case> paramDTOsToCases(List<CaseCalderaDTO> caseCalderaDTOS);
 
     @Mapping(target = "name",source = "testcaseName")
-    @Mapping(target = "technique",source = "techniqueId")
+    @Mapping(target = "technique",source = "techniqueName")
+    @Mapping(target = "state",source = "state")
     CaseDTO caseToDTO(Case mycase);
 
     @Mapping(target = "name",source = "testcaseName")
-    @Mapping(target = "technique",source = "techniqueId")
+    @Mapping(target = "technique",source = "techniqueName")
+    @Mapping(target = "state",source = "state")
     List<CaseDTO> casesToDTOs(List<Case> cases);
 }

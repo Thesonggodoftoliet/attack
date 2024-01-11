@@ -64,8 +64,8 @@ public class Case implements Serializable,Cloneable {
     @TableField("case_des")
     private String caseDes;
 
-    @TableField("status")
-    private Integer status;
+    @TableField("state")
+    private Integer state;
 
     @TableField("tactic")
     private String tactic;
@@ -110,6 +110,7 @@ public class Case implements Serializable,Cloneable {
     @TableField("target_host")
     private String targetHost;
 
+    // caldera case
     @TableField("case_id")
     private String caseId;
 

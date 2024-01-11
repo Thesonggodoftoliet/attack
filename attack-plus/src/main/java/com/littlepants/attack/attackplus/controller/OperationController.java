@@ -1,15 +1,22 @@
 package com.littlepants.attack.attackplus.controller;
 
+import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.littlepants.attack.attackplus.base.R;
+import com.littlepants.attack.attackplus.dto.OperationDTO;
 import com.littlepants.attack.attackplus.entity.Operation;
+import com.littlepants.attack.attackplus.mapper.OperationMapper;
+import com.littlepants.attack.attackplus.service.CaseService;
 import com.littlepants.attack.attackplus.service.OperationService;
+import com.littlepants.attack.attackplus.utils.JsonUtil;
 import io.swagger.annotations.Api;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * <p>
@@ -26,9 +33,11 @@ import java.util.List;
 @Slf4j
 public class OperationController {
     private final OperationService operationService;
+    private final CaseService caseService;
 
-    public OperationController(OperationService operationService) {
+    public OperationController(OperationService operationService, CaseService caseService) {
         this.operationService = operationService;
+        this.caseService = caseService;
     }
 
     @GetMapping("/getAll")
@@ -36,6 +45,24 @@ public class OperationController {
         return R.success(operationService.list());
     }
 
+    @GetMapping("/get/{current}")
+    public R<Map<String,Object>> getOperationPage(@PathVariable("current")int current){
+        Page<Operation> operationPage = new Page<>(current,10);
+        Page<Operation> operationPages = operationService.page(operationPage);
+        List<OperationDTO> operationDTOList = OperationMapper.INSTANCE.operationToDTOs(operationPages.getRecords());
+        for (OperationDTO dto:operationDTOList){
+            Map<String,List<Map<String,Object>>> result = caseService.getBarByOperationId(dto.getId());
+            dto.setOutcome(result.get("outcome"));
+            dto.setProgress(result.get("progress"));
+        }
+        Map<String,Object> result = new HashMap<>();
+        result.put("records",operationDTOList);
+        result.put("pages",operationPages.getPages());
+        result.put("size",operationPages.getSize());
+        result.put("total",operationPages.getTotal());
+        result.put("current",operationPages.getCurrent());
+        return R.success(result);
+    }
     @GetMapping("/getAll/{page}/{count}")
     public R<IPage<Operation>> getAllPage(@PathVariable("page")int page, @PathVariable("count")int count){
         Page<Operation> operationPage = new Page<>(page,count);

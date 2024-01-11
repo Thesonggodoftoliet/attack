@@ -1,5 +1,6 @@
 package com.littlepants.attack.attackplus.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.Data;
 
 import java.io.Serial;
@@ -19,6 +20,7 @@ import java.io.Serializable;
 public class UserDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long id;
     private String phone;
     private String userAccount;

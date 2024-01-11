@@ -1,5 +1,7 @@
 package com.littlepants.attack.attackplus.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import jnr.ffi.annotations.In;
 import lombok.Data;
 
 import java.io.Serial;
@@ -22,7 +24,9 @@ import java.util.Map;
 public class OperationDTO implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long id;
+    @JsonFormat(shape = JsonFormat.Shape.STRING)
     private Long campaignId;
     private Integer state;
     private LocalDateTime startTime;
