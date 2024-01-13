@@ -1,20 +1,31 @@
 package com.littlepants.attack.attackplus.controller;
 
+import cn.hutool.core.util.HexUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.littlepants.attack.attackplus.base.R;
 import com.littlepants.attack.attackplus.dto.CaseCalderaDTO;
 import com.littlepants.attack.attackplus.dto.CaseDTO;
 import com.littlepants.attack.attackplus.entity.Case;
+import com.littlepants.attack.attackplus.entity.Testcase;
+import com.littlepants.attack.attackplus.exception.BaseException;
+import com.littlepants.attack.attackplus.exception.BizException;
+import com.littlepants.attack.attackplus.exception.code.BaseExceptionCode;
 import com.littlepants.attack.attackplus.exception.code.ExceptionCode;
 import com.littlepants.attack.attackplus.mapper.CaseMapper;
 import com.littlepants.attack.attackplus.service.CaseService;
+import com.littlepants.attack.attackplus.service.UploadService;
 import com.littlepants.attack.attackplus.utils.JsonUtil;
+import io.netty.util.internal.StringUtil;
 import io.swagger.annotations.Api;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,9 +44,11 @@ import java.util.Map;
 public class CaseController {
     private final Logger logger = LoggerFactory.getLogger(CaseController.class);
     private final CaseService caseService;
+    private final UploadService uploadService;
 
-    public CaseController(CaseService caseService) {
+    public CaseController(CaseService caseService, UploadService uploadService) {
         this.caseService = caseService;
+        this.uploadService = uploadService;
     }
 
     @GetMapping("/getCase/{page}/{count}")
@@ -86,6 +99,12 @@ public class CaseController {
         return R.success();
     }
 
+    //还未处理
+    @PostMapping("/addCase")
+    public R<Boolean> addFromTemplate(@RequestBody Testcase testcase){
+        return R.success();
+    }
+
     @PostMapping("/updateFromCaldera")
     public R<Boolean> updateFromCaldera(@RequestBody String body){
         List<CaseCalderaDTO> list = JsonUtil.toList(body, CaseCalderaDTO.class);
@@ -117,5 +136,31 @@ public class CaseController {
             return R.fail(ExceptionCode.SQL_EX);
         }
         return R.success();
+    }
+
+    @PostMapping(value = "/upload",consumes = "multipart/form-data")
+    public R<Map<String,Object>> uploadFile(@RequestParam("file") MultipartFile multipartFile) throws IOException {
+        if (multipartFile.isEmpty())
+            return R.fail(ExceptionCode.NULL_POINT_EX);
+        String contentType = multipartFile.getContentType();
+        InputStream inputStream = multipartFile.getInputStream();
+        byte[] str = new byte[10];
+        int tag = inputStream.read(str,0,str.length);
+        if (tag==-1)
+            return R.fail(ExceptionCode.PARAM_EX);
+
+        String code = HexUtil.decodeHexStr(Arrays.toString(str));
+//        System.out.println(code);
+        assert contentType != null;
+        if (!contentType.equals("image/jpeg")&&!contentType.equals("image/png"))
+            return R.fail(500,"仅支持jpg或png");
+        if (!code.equals("89504e470d0a1a0a0000")&&!code.equals("ffd8ffe000104a464946"))
+            return R.fail(500,"仅支持jpg或png");
+        String result = uploadService.uploadImg(multipartFile,"/img");
+        if (result.equals("error"))
+            return R.fail(500,"文件上传失败");
+        Map<String,Object> msg= new HashMap<>();
+        msg.put("url",result);
+        return R.success(msg);
     }
 }

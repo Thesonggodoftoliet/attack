@@ -20,10 +20,14 @@ import java.util.concurrent.TimeoutException;
 
 public interface TestcaseStrategy<T> {
     String getStrategy();
+
     List<T> getTestcasesByIds(List<Long> ids);
     List<Testcase> toTestcases(List<T> specificTestcase);
     List<Case> toCases(List<T> specificTestcases, Long operationId);
+    Case toCase(T specificTestcase,Long operationId);
+    Case toCase(Long id,Long operationId);
     List<Testcase> getAllTestcases();
     List<Testcase> getTestcasesBy(Map<String,Object> params);
     void execute(Operation operation) throws TimeoutException;
+
 }

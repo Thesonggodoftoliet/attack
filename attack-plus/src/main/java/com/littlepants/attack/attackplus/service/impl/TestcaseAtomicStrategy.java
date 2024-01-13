@@ -63,6 +63,17 @@ public class TestcaseAtomicStrategy implements TestcaseStrategy<TestcaseAtomic> 
     }
 
     @Override
+    public Case toCase(TestcaseAtomic specificTestcase, Long operationId) {
+        return new Case(TestcaseMapper.INSTANCE.atomicToTestcase(specificTestcase), operationId);
+    }
+
+    @Override
+    public Case toCase(Long id, Long operationId) {
+        TestcaseAtomic atomic = testcaseAtomicService.getById(id);
+        return toCase(atomic,operationId);
+    }
+
+    @Override
     public List<Testcase> getAllTestcases() {
         List<TestcaseAtomic> atomics = testcaseAtomicService.list();
         return toTestcases(atomics);

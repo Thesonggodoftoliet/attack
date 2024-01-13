@@ -26,9 +26,9 @@ import java.util.Properties;
  * @description
  */
 public class CodeGeneration {
-    private final static String dirPath = "D:\\Projects\\attack-plus\\src\\main\\java";
+    private final static String dirPath = "D:\\Projects\\attack\\attack-plus\\src\\main\\java";
     private final static String author = "厕所歌神李狗蛋";
-    private final static String packageName = "com.attack.attackplus";
+    private final static String packageName = "com.littlepants.attack.attackplus";
     private final static String serviceTemplatePath = "templates/att_service.java.vm";
     private final static String serviceImplTemplatePath = "templates/att_serviceImpl.java.vm";
     private final static String entityTemplatePath = "templates/att_entity.java.vm";
@@ -44,7 +44,7 @@ public class CodeGeneration {
     public static void main(String[] args) throws IOException {
 
         Properties properties = new Properties();
-        InputStream in = new FileInputStream("D:\\Projects\\attack-plus\\src\\main\\resources\\application-dev.properties");
+        InputStream in = new FileInputStream("D:\\Projects\\attack\\attack-plus\\src\\main\\resources\\application-dev.properties");
         properties.load(in);
         String url = properties.getProperty("spring.datasource.url");
         String username = properties.getProperty("spring.datasource.username");
@@ -68,8 +68,8 @@ public class CodeGeneration {
                     }
                 });
 //        String[] tables = {"att_testcase_caldera","att_testcase_atomic","att_testcase_ms"};
-        String[] tables = {"att_case_ip","att_case_operation","att_case_tools","att_testcase_campaign"};
-        createService(DATA_SOURCE_CONFIG,tables);
+        String[] tables = {"att_tactic","att_tech"};
+        createEntity(DATA_SOURCE_CONFIG,tables);
     }
 
     /**
@@ -128,17 +128,16 @@ public class CodeGeneration {
                         .enableSwagger().fileOverride();})
                 .packageConfig(builder -> {builder.parent(packageName);})
                 .strategyConfig(builder -> {builder.addInclude(tables).addTablePrefix("att_")
-//                        .entityBuilder().enableLombok().enableTableFieldAnnotation().idType(IdType.ASSIGN_ID)
+                        .entityBuilder().enableLombok().enableTableFieldAnnotation().idType(IdType.ASSIGN_ID)
                         .controllerBuilder().formatFileName(controllerName).enableRestStyle()
                         .serviceBuilder().formatServiceFileName(serviceName).formatServiceImplFileName(serviceImplName)
-                        .mapperBuilder().formatMapperFileName(mapperName).formatXmlFileName(mapperXmlName).enableMapperAnnotation();})
+                        .mapperBuilder().formatMapperFileName(mapperName).enableMapperAnnotation();})
                 .templateConfig(builder -> {builder.disable()
                         .service(serviceTemplatePath)
                         .serviceImpl(serviceImplTemplatePath)
-//                        .entity(entityTemplatePath)
+                        .entity(entityTemplatePath)
                         .controller(controllerTemplatePath)
                         .mapper(mapperTemplatePath)
-                        .mapperXml(mapperXmlTemplatePath)
                         .build();})
                 .execute();
     }

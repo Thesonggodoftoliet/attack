@@ -76,6 +76,17 @@ public class TestcaseCalderaStrategy implements TestcaseStrategy<TestcaseCaldera
     }
 
     @Override
+    public Case toCase(TestcaseCaldera specificTestcase, Long operationId) {
+        return new Case(TestcaseMapper.INSTANCE.calderaToTestcase(specificTestcase),operationId );
+    }
+
+    @Override
+    public Case toCase(Long id, Long operationId) {
+        TestcaseCaldera caldera = calderaService.getById(id);
+        return toCase(caldera,operationId);
+    }
+
+    @Override
     public List<Testcase> getAllTestcases() {
         List<TestcaseCaldera> testcaseCalderas = calderaService.list();
         return toTestcases(testcaseCalderas);

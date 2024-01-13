@@ -61,6 +61,17 @@ public class TestcaseMsStrategy implements TestcaseStrategy<TestcaseMs> {
     }
 
     @Override
+    public Case toCase(TestcaseMs specificTestcase, Long operationId) {
+        return new Case(TestcaseMapper.INSTANCE.msToTestcase(specificTestcase),operationId );
+    }
+
+    @Override
+    public Case toCase(Long id, Long operationId) {
+        TestcaseMs ms = testcaseMsService.getById(id);
+        return toCase(ms,operationId);
+    }
+
+    @Override
     public List<Testcase> getAllTestcases() {
         List<TestcaseMs> testcaseMss = testcaseMsService.list();
         return toTestcases(testcaseMss);
